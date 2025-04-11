@@ -64,11 +64,7 @@ process_cidr() {
     echo "[*] Processing CIDR: $1"
     
     if [ -n "$OUTPUT_FILE" ]; then
-        {
-            echo ""
-            echo "[*] Processing CIDR: $1"
-            echo "$1" | tlsx -silent -san -cn -resp-only | sort -u | dnsx -silent | httpx -sc -probe -title -tech-detect -silent
-        } | tee -a "$OUTPUT_FILE"
+        echo "$1" | tlsx -silent -san -cn -resp-only | sort -u | dnsx -silent | httpx -sc -probe -title -tech-detect -silent >> "$OUTPUT_FILE"
     else
         echo "$1" | tlsx -silent -san -cn -resp-only | sort -u | dnsx -silent | httpx -sc -probe -title -tech-detect -silent
     fi
