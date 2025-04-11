@@ -1,6 +1,5 @@
 # CIDR Recon Tool
 
-![GitHub](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Requirements](https://img.shields.io/badge/dependencies-tlsx,dnsx,httpx-green)
 
 A lightweight reconnaissance pipeline for security professionals to quickly scan CIDR ranges.
