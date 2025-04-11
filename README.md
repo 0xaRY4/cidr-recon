@@ -1,63 +1,62 @@
-Here's a concise and practical README.md for your CIDR Recon tool:
+# CIDR Recon Tool
 
-```markdown
-# CIDR Recon
+![GitHub](https://img.shields.io/badge/license-MIT-blue.svg)
+![Requirements](https://img.shields.io/badge/dependencies-tlsx,dnsx,httpx-green)
 
-A lightweight reconnaissance tool for scanning CIDR ranges, extracting TLS info, resolving DNS, and probing HTTP services.
+A lightweight reconnaissance pipeline for security professionals to quickly scan CIDR ranges.
 
-## Features
-- Scan single CIDR or multiple CIDRs from a file
-- Extract TLS certificates (SAN/CN)
-- Resolve DNS records
-- Detect HTTP services with status codes, titles, and technologies
-- Save results to output file
+## 🚀 Features
 
-## Installation
+- Single-command CIDR reconnaissance
+- TLS certificate extraction (SAN/CN)
+- DNS resolution pipeline
+- HTTP service detection
+- Clean, parseable output
+
+## 📦 Installation
+
+1. Install dependencies:
 ```bash
+go install github.com/projectdiscovery/tlsx/cmd/tlsx@latest
+go install github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+go install github.com/projectdiscovery/httpx/cmd/httpx@latest
+```
+
+2. Download the script:
+```bash
+wget https://raw.githubusercontent.com/yourusername/cidr-recon/main/cidr-recon.sh
 chmod +x cidr-recon.sh
 ```
 
-## Usage
+## 🛠 Usage
+
 ```bash
-./cidr-recon.sh [OPTIONS] <CIDR>
+./cidr-recon.sh [OPTIONS] <INPUT>
 ```
 
-### Options:
-- `-l, --list FILE` - File containing CIDR list (one per line)
-- `-o, --output FILE` - Save results to output file
-- `--help` - Show help message
+### Basic Usage
+| Command | Description |
+|---------|-------------|
+| `./cidr-recon.sh 192.168.1.0/24` | Scan single CIDR |
+| `./cidr-recon.sh -l cidrs.txt` | Scan CIDR list |
+| `./cidr-recon.sh -l cidrs.txt -o results.txt` | Save output |
 
-### Examples:
-```bash
-# Scan single CIDR
-./cidr-recon.sh 192.168.0.0/24
+### Options
+| Flag | Description |
+|------|-------------|
+| `-l` | File containing CIDR list |
+| `-o` | Output file |
+| `--help` | Show help message |
 
-# Scan CIDR list
-./cidr-recon.sh -l cidr_list.txt
+## 📝 Example Output
 
-# Save results to file
-./cidr-recon.sh 192.168.0.0/24 -o results.txt
+```
+https://example.com 200 Welcome [nginx,php]
+http://test.site 301 Redirect [apache]
 ```
 
-## Dependencies
+## 📌 Dependencies
+
 - [tlsx](https://github.com/projectdiscovery/tlsx)
 - [dnsx](https://github.com/projectdiscovery/dnsx)
 - [httpx](https://github.com/projectdiscovery/httpx)
-
-## Output Format
-```
-[URL] [STATUS] [TITLE] [TECH]
-```
-
-> Note: Use responsibly and only on networks you're authorized to scan.
-```
-
-Key points:
-- Kept it under 30 lines
-- Included only essential information
-- Clear usage examples
-- Mentioned dependencies
-- Specified output format
-- Added responsible use disclaimer
-
-The README follows the minimalist approach while covering all necessary details for users to understand and use the tool effectively.
