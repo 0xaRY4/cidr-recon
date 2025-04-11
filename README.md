@@ -4,7 +4,7 @@
 
 A lightweight reconnaissance pipeline for security professionals to quickly scan CIDR ranges.
 
-## 🚀 Features
+##  Features
 
 - Single-command CIDR reconnaissance
 - TLS certificate extraction (SAN/CN)
@@ -12,7 +12,7 @@ A lightweight reconnaissance pipeline for security professionals to quickly scan
 - HTTP service detection
 - Clean, parseable output
 
-## 📦 Installation
+##  Installation
 
 1. Install dependencies:
 ```bash
@@ -23,7 +23,7 @@ go install github.com/projectdiscovery/httpx/cmd/httpx@latest
 
 2. Download the script:
 ```bash
-wget https://raw.githubusercontent.com/yourusername/cidr-recon/main/cidr-recon.sh
+wget https://raw.githubusercontent.com/0xaRY4/cidr-recon/main/cidr-recon.sh
 chmod +x cidr-recon.sh
 ```
 
