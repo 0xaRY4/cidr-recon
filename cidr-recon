@@ -1,10 +1,104 @@
 #!/bin/bash
 
-if [ $# -eq 0 ]; then
-    echo "Error: CIDR range required"
-    echo "Usage: $0 <CIDR>"
-    echo "Example: $0 192.168.0.0/24"
+show_help() {
+    echo "CIDR Recon Tool - Perform automated reconnaissance on CIDR ranges"
+    echo ""
+    echo "Usage:"
+    echo "  $0 [-l CIDR_LIST_FILE] [-o OUTPUT_FILE] | <CIDR>"
+    echo "  $0 --help"
+    echo ""
+    echo "Options:"
+    echo "  -l, --list FILE    File containing list of CIDRs (one per line)"
+    echo "  -o, --output FILE  Save results to specified output file"
+    echo "  --help             Show this help message"
+    echo ""
+    echo "Operations performed for each CIDR:"
+    echo "  1. Extract TLS information (SAN, CN)"
+    echo "  2. Resolve DNS records"
+    echo "  3. Probe HTTP services (status, title, tech)"
+    echo ""
+    echo "Examples:"
+    echo "  Scan single CIDR:          $0 192.168.0.0/24"
+    echo "  Scan CIDR list:            $0 -l cidr_list.txt"
+    echo "  Save to output file:       $0 192.168.0.0/24 -o results.txt"
+    echo "  Scan list and save output: $0 -l cidr_list.txt -o results.txt"
+    echo ""
+    echo "Output format:"
+    echo "  [URL] [STATUS] [TITLE] [TECH]"
+    exit 0
+}
+
+OUTPUT_FILE=""
+CIDR_LIST=""
+SINGLE_CIDR=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -l|--list)
+            CIDR_LIST="$2"
+            shift
+            shift
+            ;;
+        -o|--output)
+            OUTPUT_FILE="$2"
+            shift
+            shift
+            ;;
+        --help)
+            show_help
+            ;;
+        -*)
+            echo "Error: Unknown option $1"
+            show_help
+            exit 1
+            ;;
+        *)
+            SINGLE_CIDR="$1"
+            shift
+            ;;
+    esac
+done
+
+process_cidr() {
+    echo ""
+    echo "[*] Processing CIDR: $1"
+    
+    if [ -n "$OUTPUT_FILE" ]; then
+        {
+            echo ""
+            echo "[*] Processing CIDR: $1"
+            echo "$1" | tlsx -silent -san -cn -resp-only | sort -u | dnsx -silent | httpx -sc -probe -title -tech-detect -silent
+        } | tee -a "$OUTPUT_FILE"
+    else
+        echo "$1" | tlsx -silent -san -cn -resp-only | sort -u | dnsx -silent | httpx -sc -probe -title -tech-detect -silent
+    fi
+}
+
+if [ -z "$CIDR_LIST" ] && [ -z "$SINGLE_CIDR" ]; then
+    echo "Error: No CIDR specified"
+    show_help
     exit 1
 fi
 
-echo $1 | tlsx -silent -san -cn -resp-only | sort -u | dnsx -silent | httpx -sc -probe -title -tech-detect -silent
+if [ -n "$OUTPUT_FILE" ] && [ -f "$OUTPUT_FILE" ]; then
+    echo "[!] Warning: Output file exists, appending results"
+fi
+
+if [ -n "$CIDR_LIST" ]; then
+    if [ ! -f "$CIDR_LIST" ]; then
+        echo "Error: CIDR list file not found: $CIDR_LIST"
+        exit 1
+    fi
+    
+    while IFS= read -r cidr || [ -n "$cidr" ]; do
+        process_cidr "$cidr"
+    done < "$CIDR_LIST"
+else
+    process_cidr "$SINGLE_CIDR"
+fi
+
+echo ""
+echo "[*] Scan completed"
+if [ -n "$OUTPUT_FILE" ]; then
+    echo "[*] Results saved to: $OUTPUT_FILE"
+fi
